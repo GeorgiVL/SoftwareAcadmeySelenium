@@ -18,6 +18,7 @@ public class TestUtil {
     public WebDriver driver;
     private String url;
     private int implicitlyWait;
+    private String browser;
 
     @BeforeSuite
     public void readConfigProperties() {
@@ -28,13 +29,15 @@ public class TestUtil {
             url = config.getProperty("urlAddress");
             implicitlyWait = Integer.parseInt(config.getProperty("implicitlyWait"));
             // Homework - to add chrome browser
+            browser = config.getProperty("browser");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @BeforeTest
-    public void setUp(){
+    public void setUp() throws InterruptedException {
         setupBrowserDriver();
         loadUrl();
     }
@@ -43,9 +46,16 @@ public class TestUtil {
         driver.get(url);
     }
 
-    private void setupBrowserDriver() {
-        driver = DriverFactory.getFirefoxDriver(implicitlyWait);
-        // chrome implementation
+    private void setupBrowserDriver() throws InterruptedException {
+
+        if(browser.equals("chrome")) {
+            driver = DriverFactory.getChromeDriver(implicitlyWait);
+        } else if(browser.equals("firefox")) {
+            driver = DriverFactory.getFirefoxDriver(implicitlyWait);
+        } else {
+            throw new InterruptedException("The browser doesn't exist!");
+        }
+        // browsers implementation
 
     }
 
